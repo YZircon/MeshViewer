@@ -15,8 +15,18 @@ find_package(Eigen REQUIRED)
 include_directories(${GLAD_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
 include_directories(${Eigen_INCLUDE_DIRS})
+include_directories(3rdparty/OBJLoader)
 
-add_executable(${PROJECT_NAME} ${GLAD_SOURCE} src/main.cpp src/Geometry.cpp src/Geometry.h)
+add_executable(${PROJECT_NAME} ${GLAD_SOURCE}
+        src/main.cpp
+        src/Geometry.cpp
+        src/Geometry.h
+        src/Camera.cpp
+        src/Camera.h
+        src/Shader.cpp
+        src/Shader.h
+        src/Mesh.cpp
+        src/Mesh.h)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES})

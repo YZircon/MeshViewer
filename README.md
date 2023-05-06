@@ -21,3 +21,10 @@ This project is configured for Windows 10 64 bit & CLion 2022.3.1. If you are us
 
 ### 3rd Party Libraries
 
+#### GLAD
+
+#### GLFW
+
+#### Eigen
+
+#### OBJ-Loader
