@@ -94,6 +94,10 @@ void Shader :: SetFloat(const std::string &name, float value) const {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
+void Shader :: SetVec3(const std::string &name, Eigen :: Vector3f value) const {
+    glUniform3f(glGetUniformLocation(ID, name.c_str()), value.x(), value.y(), value.z());
+}
+
 void Shader :: SetMat4(const std::string &name, Eigen::Matrix4f value) const {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, value.data()); // Eigen默认是列主序存储,和OpenGL一样,而DirectX是行主序,需要转置;
 }

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(GLYT)
+project(MeshViewer)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -26,7 +26,7 @@ add_executable(${PROJECT_NAME} ${GLAD_SOURCE}
         src/Shader.cpp
         src/Shader.h
         src/Mesh.cpp
-        src/Mesh.h)
+        src/Mesh.h src/Light.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES})

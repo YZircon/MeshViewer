@@ -57,7 +57,7 @@ protected:
     Eigen :: Vector3f Direction = Eigen :: Vector3f(0.0f, 0.0f, -1.0f); // Camera Look at this direction
     Eigen :: Vector3f WorldUp = Eigen :: Vector3f(0.0f, 1.0f, 0.0f); // Up direction of the world
 
-    float MoveSpeed;
+    float MoveSpeed = 2.5f;
     float EyeFov;
     float AspectRatio;
 };
@@ -82,9 +82,15 @@ public:
 
     float GetzNear() const { return zNear; }
 
+    Eigen :: Vector3f GetPos() const{ return Position; };
+
     Eigen :: Matrix4f GetProjectionMatrix() const{ return get_projection_matrix(EyeFov, AspectRatio, zNear, zFar); }
 
     Eigen :: Matrix4f GetViewMatrix() const { return Camera :: GetViewMatrix(); }
+
+    void handleKeyboardInput(int key, float deltatime){
+        Camera :: handleKeyboardInput(key, deltatime);
+    }
 
     void SetzFar(float far) { zFar = far; }
 

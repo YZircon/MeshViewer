@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include "Shader.h"
+#include "Material.h"
 
 namespace objl {
     class Mesh;
@@ -19,7 +20,7 @@ namespace objl {
 struct Vertex{
     Eigen :: Vector3f Position;
     Eigen :: Vector3f Normal;
-    Eigen :: Vector2f TexCoords;
+    Eigen :: Vector2f TexCoord;
 };
 
 class Mesh {
@@ -42,6 +43,9 @@ public:
     void draw(Shader &shader);
 protected:
     std :: vector<Mesh> mesh;
+    std :: unordered_map <std :: string, Texture2D *> textures;
+    std :: unordered_map <std :: string, Material *> materials;
+    /*TODO: 增加材质,所有的材质都在 Model中实例化,但给 Mesh 用指针传进去,对于每个材质,我们使用名字作为唯一标识,用unordered_map找此前是否已经加载该材质*/
 };
 
 

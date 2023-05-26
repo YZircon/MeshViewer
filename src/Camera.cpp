@@ -37,6 +37,12 @@ void Camera :: handleKeyboardInput(int key, float deltatime) {
     if(key == GLFW_KEY_D){ //右移
         Position += (Direction.cross(WorldUp)).normalized() * Speed;
     }
+    if(key == GLFW_KEY_Q){ //上移
+        Position -= (Direction.cross(Direction.cross(WorldUp))).normalized() * Speed;
+    }
+    if(key == GLFW_KEY_E){ //下移
+        Position += (Direction.cross(Direction.cross(WorldUp))).normalized() * Speed;
+    }
 }
 
 void Camera :: handleMouseInput() {
