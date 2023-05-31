@@ -16,6 +16,7 @@ include_directories(${GLAD_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
 include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(3rdparty/OBJLoader)
+include_directories(3rdparty/stb)
 
 add_executable(${PROJECT_NAME} ${GLAD_SOURCE}
         src/main.cpp
@@ -26,7 +27,7 @@ add_executable(${PROJECT_NAME} ${GLAD_SOURCE}
         src/Shader.cpp
         src/Shader.h
         src/Mesh.cpp
-        src/Mesh.h src/Light.cpp)
+        src/Mesh.h src/Light.cpp src/Material.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES})

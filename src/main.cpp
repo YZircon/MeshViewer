@@ -54,7 +54,7 @@ std :: vector <float> vertices[4]{
 };
 
 PerspectiveCamera MainCam(Eigen :: Vector3f(0.0f, 0.0f, 10.0f), Eigen :: Vector3f(0.0f, 0.0f, -1.0f), Eigen :: Vector3f(0.0f, 1.0f, 0.0f), 0.5, 45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-Light MainLight(Eigen :: Vector3f(5.0f, 5.0f, 10.0f), Eigen :: Vector3f(1.0f, 1.0f, 1.0f), 0.5);
+Light MainLight(Eigen :: Vector3f(10.0f, 10.0f, 10.0f), Eigen :: Vector3f(1.0f, 1.0f, 1.0f), 0.5);
 
 void processInput(GLFWwindow* window, float deltaTime){
     if(glfwGetKey(window,GLFW_KEY_ESCAPE) == GLFW_PRESS){//如果在window窗口检测到esc被按下
@@ -90,8 +90,6 @@ void render(Shader &shader){
     shader.SetMat4("Model", Model);
     shader.SetMat4("View", View);
     shader.SetMat4("Projection", Projection);
-
-    //CornellBox.draw(shader);
 }
 
 void InitConfig(){
@@ -103,11 +101,12 @@ void InitConfig(){
 }
 
 int main(){
+
     glfwInit();//初始化GLFW
 
     InitConfig();
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH,SCR_HEIGHT,"GLYT", nullptr,nullptr);//创建一个GLFW窗口对象,它的指针放在 window 中
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH,SCR_HEIGHT,"MeshViewer", nullptr,nullptr);//创建一个GLFW窗口对象,它的指针放在 window 中
     if(window == nullptr){
         std :: cout << "Failed to create GLFW window" << std :: endl;
         glfwTerminate();//终止 GLFW
@@ -132,16 +131,15 @@ int main(){
     }
     Mesh Test(vert);*/
 
-    Model BoxStack("../models/box_stack/box_stack.obj");
-    //Model CornellBox("../models/CornellBox/cornell_box.obj");
+    Model Lumine("../models/lumine/Lumine.obj", &Shader);
+    //Model BoxStack("../models/box_stack/box_stack.obj", &Shader);
+    //Model CornellBox("../models/CornellBox/cornell_box.obj", &Shader);
     //Model StanfordBunny("../models/stanford-bunny/stanford-bunny.obj"); // 加载模型必须放在主函数内,否则OpenGL还没初始化,显然会崩溃
 
     Shader.activate();
     Shader.SetVec3("LightColor", MainLight.GetColor()); // 设置光源颜色
     Shader.SetVec3("LightPos", MainLight.GetPosition()); // 设置光源位置
     Shader.SetVec3("EyePos", MainCam.GetPos());
-
-    glEnable(GL_DEPTH_TEST); //开深度测试
 
     while(!glfwWindowShouldClose(window)){ //"游戏循环"
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -151,7 +149,7 @@ int main(){
         processInput(window, deltaTime);
         //update();
         render(Shader);
-        BoxStack.draw(Shader);
+        Lumine.draw();
         glfwPollEvents();
         glfwSwapBuffers(window);
     }

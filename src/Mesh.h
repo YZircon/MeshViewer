@@ -25,24 +25,28 @@ struct Vertex{
 
 class Mesh {
 public:
-    Mesh(objl :: Mesh mesh);
+    Mesh(objl :: Mesh mesh, Material *material);
     Mesh(std :: vector <Vertex> vert){vertices = vert,SetupMesh();}
     ~Mesh();
     void SetupMesh();
-    void draw(Shader &shader);
+    void draw();
 protected:
     std :: vector <Vertex> vertices;
     std :: vector <unsigned  int> indices;
     unsigned int VAO, VBO, EBO;
+    Material *material;
 };
 
 class Model{
 public:
-    Model(std :: string dir);
+    Model(){}
+    Model(std :: string dir, Shader *shader);
     ~Model() = default;
-    void draw(Shader &shader);
+    void draw();
 protected:
-    std :: vector<Mesh> mesh;
+    Texture2D *loadTexture(const std :: string &dir, std :: string Type);
+    Shader *program = nullptr;
+    std :: vector<Mesh *> mesh;
     std :: unordered_map <std :: string, Texture2D *> textures;
     std :: unordered_map <std :: string, Material *> materials;
     /*TODO: 增加材质,所有的材质都在 Model中实例化,但给 Mesh 用指针传进去,对于每个材质,我们使用名字作为唯一标识,用unordered_map找此前是否已经加载该材质*/

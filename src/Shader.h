@@ -25,5 +25,4 @@ protected:
     unsigned int ID;
 };
 
-
 #endif //GLYT_SHADER_H
