@@ -34,7 +34,7 @@ protected:
     std :: vector <Vertex> vertices;
     std :: vector <unsigned  int> indices;
     unsigned int VAO, VBO, EBO;
-    Material *material;
+    Material *material = nullptr;
 };
 
 class Model{
@@ -43,13 +43,30 @@ public:
     Model(std :: string dir, Shader *shader);
     ~Model() = default;
     void draw();
+    std :: unordered_map <std :: string, float> GetBoundingBox(){
+        return BoundingBox;
+    }
+
+    Eigen :: Vector3f GetScale(){
+        return Scale;
+    }
+
+    void SetScale(Eigen :: Vector3f scale){
+        Scale = scale;
+    }
+
+    void AddMesh(Mesh *x){ // dangerous! force to add a mesh into the model, not inflect the Bounding Box
+        mesh.push_back(x);
+    }
+
 protected:
     Texture2D *loadTexture(const std :: string &dir, std :: string Type);
     Shader *program = nullptr;
     std :: vector<Mesh *> mesh;
     std :: unordered_map <std :: string, Texture2D *> textures;
     std :: unordered_map <std :: string, Material *> materials;
-    /*TODO: 增加材质,所有的材质都在 Model中实例化,但给 Mesh 用指针传进去,对于每个材质,我们使用名字作为唯一标识,用unordered_map找此前是否已经加载该材质*/
+    std :: unordered_map <std :: string, float> BoundingBox; // 标签为 x_min, x_max, y_min, y_max, z_min, z_max
+    Eigen :: Vector3f Scale = Eigen :: Vector3f(1.0, 1.0, 1.0);
 };
 
 

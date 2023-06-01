@@ -29,31 +29,7 @@ void framebuffer_size_callback(GLFWwindow* window,int width,int height){//用来
     glViewport(0,0,width,height);
 }
 
-void update(){
-
-}
-
-std :: vector <float> vertices[4]{
-        {
-                0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-                1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-                0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-                1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-                -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-                0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-                -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f
-        },{
-        },{
-        },{
-        }
-};
-
-PerspectiveCamera MainCam(Eigen :: Vector3f(0.0f, 0.0f, 10.0f), Eigen :: Vector3f(0.0f, 0.0f, -1.0f), Eigen :: Vector3f(0.0f, 1.0f, 0.0f), 0.5, 45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+PerspectiveCamera MainCam(Eigen :: Vector3f(0.0f, 0.0f, 0.0f), Eigen :: Vector3f(0.0f, 0.0f, -1.0f), Eigen :: Vector3f(0.0f, 1.0f, 0.0f), 0.5, 45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 Light MainLight(Eigen :: Vector3f(10.0f, 10.0f, 10.0f), Eigen :: Vector3f(1.0f, 1.0f, 1.0f), 0.5);
 
 void processInput(GLFWwindow* window, float deltaTime){
@@ -80,16 +56,22 @@ void processInput(GLFWwindow* window, float deltaTime){
     }
 }
 
-void render(Shader &shader){
-    glClearColor(255.0f, 255.0f, 255.0f, 1.0f);
+void update(Shader &shader, Camera &camera, Eigen :: Vector3f Scale){
+    shader.activate();
+    glClearColor(0.5, 0.5, 0.5, 1.0f);
 
-    Eigen :: Matrix4f Model = get_model_matrix(0.0);
-    Eigen :: Matrix4f View = MainCam.GetViewMatrix();
-    Eigen :: Matrix4f Projection = MainCam.GetProjectionMatrix();
+    Eigen :: Matrix4f Model = get_model_matrix(0.0, Scale);
+    Eigen :: Matrix4f View = camera.GetViewMatrix();
+    Eigen :: Matrix4f Projection = camera.GetProjectionMatrix();
 
     shader.SetMat4("Model", Model);
     shader.SetMat4("View", View);
     shader.SetMat4("Projection", Projection);
+
+    shader.SetVec3("LightColor", MainLight.GetColor()); // 设置光源颜色
+    shader.SetVec3("LightPos", MainLight.GetPosition()); // 设置光源位置
+    shader.SetVec3("EyePos", MainCam.GetPos());
+    shader.deactivate();
 }
 
 void InitConfig(){
@@ -132,14 +114,30 @@ int main(){
     Mesh Test(vert);*/
 
     Model Lumine("../models/lumine/Lumine.obj", &Shader);
-    //Model BoxStack("../models/box_stack/box_stack.obj", &Shader);
     //Model CornellBox("../models/CornellBox/cornell_box.obj", &Shader);
-    //Model StanfordBunny("../models/stanford-bunny/stanford-bunny.obj"); // 加载模型必须放在主函数内,否则OpenGL还没初始化,显然会崩溃
+    //Model BoxStack("../models/box_stack/box_stack.obj", &Shader);
+    //Model StanfordBunny("../models/stanford-bunny/stanford-bunny.obj", &Shader); // 加载模型必须放在主函数内,否则OpenGL还没初始化,显然会崩溃
 
-    Shader.activate();
-    Shader.SetVec3("LightColor", MainLight.GetColor()); // 设置光源颜色
-    Shader.SetVec3("LightPos", MainLight.GetPosition()); // 设置光源位置
-    Shader.SetVec3("EyePos", MainCam.GetPos());
+    std :: unordered_map <std :: string, float> BoundingBox = Lumine.GetBoundingBox(); /*放相机 TODO: 把不同大小的模型缩放到同样大小*/
+    std :: cout << std :: fixed << BoundingBox["x_max"] - BoundingBox["x_min"] << std :: endl;
+    float ylim = std :: max((BoundingBox["y_max"] - BoundingBox["y_min"]) / 2.0, MainCam.GetAspectRatio() * (BoundingBox["x_max"] - BoundingBox["x_min"]) / 2.0); // 计算 y 方向需要的最小空间(max(y方向本身需要的, x方向受aspect ratio影响导致y方向需要的))
+    float d = ylim / tan((MainCam.GetEyeFov() / 2.0) * MY_PI / 180.0); // 用fov计算需要向 -z 移动的距离, 记得先转弧度制
+    MainCam.SetPosition(Eigen :: Vector3f((BoundingBox["x_min"] + BoundingBox["x_max"]) / 2.0, (BoundingBox["y_min"] + BoundingBox["y_max"]) / 2.0, BoundingBox["z_max"] + d)); // 把相机移动到正面中心, 用几何关系算出完全显示物体所需要使用的最短距离d, 把相机向 z 方向(看向-z方向)拉 d
+    MainLight.SetPosition(Eigen :: Vector3f(BoundingBox["x_max"], BoundingBox["y_max"], (BoundingBox["z_max"] + BoundingBox["z_min"]) / 2.0 + d)); // 设置光源
+    std :: cout << MainCam.GetPosition() << std :: endl;
+
+    std :: vector <Vertex> FloorVert; // 设置地板
+    float deltaX = BoundingBox["x_max"] - BoundingBox["x_min"], deltaZ = BoundingBox["z_max"] - BoundingBox["z_min"];
+    FloorVert.push_back({Eigen :: Vector3f(BoundingBox["x_min"] - deltaX, BoundingBox["y_min"], BoundingBox["z_min"] - deltaZ),Eigen :: Vector3f(0.0f, 1.0f, 0.0f),Eigen :: Vector2f(0.0, 0.0)});
+    FloorVert.push_back({Eigen :: Vector3f(BoundingBox["x_max"] + deltaX, BoundingBox["y_min"], BoundingBox["z_min"] - deltaZ),Eigen :: Vector3f(0.0f, 1.0f, 0.0f),Eigen :: Vector2f(0.0, 0.0)});
+    FloorVert.push_back({Eigen :: Vector3f(BoundingBox["x_min"] - deltaX, BoundingBox["y_min"], BoundingBox["z_max"] + deltaZ),Eigen :: Vector3f(0.0f, 1.0f, 0.0f),Eigen :: Vector2f(0.0, 0.0)});
+    FloorVert.push_back({Eigen :: Vector3f(BoundingBox["x_max"] + deltaX, BoundingBox["y_min"], BoundingBox["z_min"] - deltaZ),Eigen :: Vector3f(0.0f, 1.0f, 0.0f),Eigen :: Vector2f(0.0, 0.0)});
+    FloorVert.push_back({Eigen :: Vector3f(BoundingBox["x_min"] - deltaX, BoundingBox["y_min"], BoundingBox["z_max"] + deltaZ),Eigen :: Vector3f(0.0f, 1.0f, 0.0f),Eigen :: Vector2f(0.0, 0.0)});
+    FloorVert.push_back({Eigen :: Vector3f(BoundingBox["x_max"] + deltaX, BoundingBox["y_min"], BoundingBox["z_max"] + deltaZ),Eigen :: Vector3f(0.0f, 1.0f, 0.0f),Eigen :: Vector2f(0.0, 0.0)});
+
+    Mesh Floor(FloorVert);
+
+    printf("Load Finish!\n");
 
     while(!glfwWindowShouldClose(window)){ //"游戏循环"
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -147,9 +145,9 @@ int main(){
         float deltaTime = nowTime - lastTime;
         lastTime = nowTime;
         processInput(window, deltaTime);
-        //update();
-        render(Shader);
+        update(Shader, MainCam, Lumine.GetScale());
         Lumine.draw();
+        Floor.draw();
         glfwPollEvents();
         glfwSwapBuffers(window);
     }

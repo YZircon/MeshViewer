@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include <filesystem>
 #include <cassert>
+#include <limits>
 
 Mesh :: Mesh(objl :: Mesh mesh, Material *Material) {
     for(int i = 0; i < mesh.Vertices.size(); i++){
@@ -14,7 +15,7 @@ Mesh :: Mesh(objl :: Mesh mesh, Material *Material) {
         Eigen :: Vector3f Normal = Eigen :: Vector3f(mesh.Vertices[i].Normal.X, mesh.Vertices[i].Normal.Y, mesh.Vertices[i].Normal.Z);
         Eigen :: Vector2f TexCoords = Eigen :: Vector2f(mesh.Vertices[i].TextureCoordinate.X, mesh.Vertices[i].TextureCoordinate.Y);
         vertices.push_back({Position, Normal, TexCoords});
-        std :: cout << "Position: " << Position.x() << ' ' << Position.y() << ' ' << Position.z() << std :: endl;
+        //std :: cout << "Position: " << Position.x() << ' ' << Position.y() << ' ' << Position.z() << std :: endl;
     }
     for(int i = 0; i < mesh.Indices.size(); i++){
         indices.push_back(mesh.Indices[i]);
@@ -53,7 +54,7 @@ void Mesh :: SetupMesh() {
 }
 
 void Mesh :: draw(){
-    material->activate();
+    if(material != nullptr) material->activate(); // 如果根本没有材质就不要试着加载材质了
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
@@ -65,6 +66,7 @@ void Mesh :: draw(){
         glDrawArrays(GL_TRIANGLES, 0, (int)vertices.size());
     }
     glBindVertexArray(0);
+    //if(material != nullptr) material->deactivate(); TODO: 添加函数以关闭纹理,避免绘制多个物体时纹理混在一起
 }
 
 Model :: Model(std :: string dir, Shader *shader) {
@@ -86,9 +88,27 @@ Model :: Model(std :: string dir, Shader *shader) {
                                                             Eigen :: Vector3f(curMaterial.Ks.X, curMaterial.Ks.Y, curMaterial.Ks.Z),
                                                             curMaterial.Ns);
         }
+        //初始化包围盒
+        BoundingBox["x_max"] = std :: numeric_limits <float> :: min();
+        BoundingBox["y_max"] = std :: numeric_limits <float> :: min();
+        BoundingBox["z_max"] = std :: numeric_limits <float> :: min();
+        BoundingBox["x_min"] = std :: numeric_limits <float> :: max();
+        BoundingBox["y_min"] = std :: numeric_limits <float> :: max();
+        BoundingBox["z_min"] = std :: numeric_limits <float> :: max();
+
         for(int i = 0; i < loader.LoadedMeshes.size(); i++){
             objl :: Mesh curMesh = loader.LoadedMeshes[i];
             mesh.push_back(new Mesh(curMesh, materials[curMesh.MeshMaterial.name]));
+
+            // 求包围盒
+            for(int j = 0; j < curMesh.Vertices.size(); j++){
+                BoundingBox["x_min"] = std :: min(BoundingBox["x_min"], curMesh.Vertices[j].Position.X);
+                BoundingBox["x_max"] = std :: max(BoundingBox["x_max"], curMesh.Vertices[j].Position.X);
+                BoundingBox["y_min"] = std :: min(BoundingBox["y_min"], curMesh.Vertices[j].Position.Y);
+                BoundingBox["y_max"] = std :: max(BoundingBox["y_max"], curMesh.Vertices[j].Position.Y);
+                BoundingBox["z_min"] = std :: min(BoundingBox["z_min"], curMesh.Vertices[j].Position.Z);
+                BoundingBox["z_max"] = std :: max(BoundingBox["z_max"], curMesh.Vertices[j].Position.Z);
+            }
         }
     }else{
         puts("Fatal Error: Cannot load your .obj file");

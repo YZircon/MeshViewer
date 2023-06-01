@@ -1,4 +1,4 @@
-# Graphics Learning : YZ's Toy
+# MeshViewer
 
 A C++/OpenGL Graphics Toy, it might be useful when you learning Computer Graphics
 
@@ -25,8 +25,8 @@ Then, you'll find a executable file named `GLYT.exe` and a Dynamic Linking Libra
 
 Currently, the shader & resource path is hard-coded in `main.cpp` , to make the program run correctly, the architecture of your directory should be like the below:
 
-- GLYT (any folder name you like will also be ok)
-  - GLYT.exe
+- MeshViewer (any folder name you like will also be ok)
+  - MeshViewer.exe
   - glfw3.dll
   - models (hard-coded now, so do not modify the name of directory and files )
   - src
@@ -43,3 +43,5 @@ Currently, the shader & resource path is hard-coded in `main.cpp` , to make the 
 #### Eigen
 
 #### OBJ-Loader
+
+#### stb

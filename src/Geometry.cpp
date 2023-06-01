@@ -7,7 +7,7 @@
 
 constexpr double MY_PI = 3.141592653589;
 
-Eigen::Matrix4f get_model_matrix(float angle) {
+Eigen::Matrix4f get_model_matrix(float angle, Eigen :: Vector3f Scale) {
     Eigen::Matrix4f rotation;
     angle = angle * MY_PI / 180.f;
     rotation << cos(angle), 0, sin(angle), 0,
@@ -16,9 +16,9 @@ Eigen::Matrix4f get_model_matrix(float angle) {
             0, 0, 0, 1;
 
     Eigen::Matrix4f scale;
-    scale << 1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
+    scale << Scale.x(), 0, 0, 0,
+            0, Scale.y(), 0, 0,
+            0, 0, Scale.z(), 0,
             0, 0, 0, 1;
 
     Eigen::Matrix4f translate;

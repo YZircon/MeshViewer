@@ -34,6 +34,8 @@ public:
 
     Eigen :: Matrix4f GetViewMatrix() const { return get_view_matrix(Position, Position + Direction, WorldUp); };
 
+    virtual Eigen :: Matrix4f GetProjectionMatrix() const {return Eigen :: Matrix4f :: Identity();}
+
     void SetPosition(Eigen :: Vector3f Pos){ Position = Pos; }
 
     void SetDirection(Eigen :: Vector3f Dir){ Direction = Dir; }
@@ -62,7 +64,7 @@ protected:
     float AspectRatio;
 };
 
-class PerspectiveCamera : Camera{
+class PerspectiveCamera : public Camera{
 public:
     PerspectiveCamera(
             Eigen :: Vector3f position,
@@ -84,7 +86,7 @@ public:
 
     Eigen :: Vector3f GetPos() const{ return Position; };
 
-    Eigen :: Matrix4f GetProjectionMatrix() const{ return get_projection_matrix(EyeFov, AspectRatio, zNear, zFar); }
+    Eigen :: Matrix4f GetProjectionMatrix() const override{ return get_projection_matrix(EyeFov, AspectRatio, zNear, zFar); }
 
     Eigen :: Matrix4f GetViewMatrix() const { return Camera :: GetViewMatrix(); }
 
@@ -101,4 +103,4 @@ protected:
     float zNear;
 };
 
-#endif //GLYT_CAMERA_H
+#endif //MESHVIEWER_CAMERA_H
