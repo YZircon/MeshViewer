@@ -7,7 +7,7 @@
 
 constexpr double MY_PI = 3.141592653589;
 
-Eigen::Matrix4f get_model_matrix(float angle, Eigen :: Vector3f Scale) {
+Eigen::Matrix4f get_model_matrix(float angle, Eigen :: Vector3f Scale, Eigen :: Vector3f DirVec) {
     Eigen::Matrix4f rotation;
     angle = angle * MY_PI / 180.f;
     rotation << cos(angle), 0, sin(angle), 0,
@@ -22,9 +22,9 @@ Eigen::Matrix4f get_model_matrix(float angle, Eigen :: Vector3f Scale) {
             0, 0, 0, 1;
 
     Eigen::Matrix4f translate;
-    translate << 1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
+    translate << 1, 0, 0, DirVec.x(),
+            0, 1, 0, DirVec.y(),
+            0, 0, 1, DirVec.z(),
             0, 0, 0, 1;
 
     return translate * rotation * scale;
@@ -92,4 +92,24 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
             0, 0, 0, 1;
     projection = mirror * ortho * orth2pers * projection;
     return projection;
+}
+
+Eigen::Matrix4f get_ortho_projection_matrix(float l, float r, float b, float t,
+                                      float zNear, float zFar) // 左右, 上下, 远近
+{
+    Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
+    //公式中的n代表zNear,f代表zFar
+    Eigen :: Matrix4f translate;
+    translate << 1, 0, 0, -(r + l) / 2,
+            0, 1, 0, -(t + b) / 2,
+            0, 0, 1, (zNear + zFar) / 2,
+            0, 0, 0, 1;
+    Eigen :: Matrix4f scale;
+    scale << 2 / (r - l), 0, 0, 0,
+            0, 2 / (t - b), 0, 0,
+            0, 0, -2 / (zFar - zNear), 0,
+            0, 0, 0, 1;
+    Eigen :: Matrix4f ortho = Eigen :: Matrix4f :: Identity();//ortho projection
+    ortho = scale * translate * ortho;
+    return ortho;
 }

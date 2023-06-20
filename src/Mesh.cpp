@@ -117,9 +117,11 @@ Model :: Model(std :: string dir, Shader *shader) {
 }
 
 void Model :: draw(){
+    program->activate();
     for(int i = 0; i < mesh.size(); i++){
         mesh[i]->draw();
     }
+    program->deactivate();
 }
 
 Texture2D *Model :: loadTexture(const std::string &dir, std :: string Type = "none") {

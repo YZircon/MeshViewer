@@ -46,6 +46,9 @@ public:
     Material(Shader *shader, std :: vector<Texture2D *> textures);
     ~Material();
 
+    virtual void SetShader(Shader* shader){
+        program = shader;
+    }
     virtual void activate();
 protected:
     Shader *program;

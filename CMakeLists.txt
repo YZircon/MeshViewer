@@ -7,10 +7,12 @@ set(GLAD_DIR 3rdparty/glad/cmake)
 set(GLFW_DIR 3rdparty/GLFW/cmake)
 set(Eigen_DIR 3rdparty/Eigen/cmake)
 
+
 find_package(GLAD REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Eigen REQUIRED)
+
 
 include_directories(${GLAD_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})

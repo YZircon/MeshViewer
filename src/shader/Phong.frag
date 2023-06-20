@@ -4,6 +4,7 @@ in vec3 Color;
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
+in vec4 FragPosInLightSpace;
 
 out vec4 FragColor;
 
@@ -26,6 +27,22 @@ uniform Material material;
 uniform Texture ambientTexture; // 纹理类型
 uniform Texture diffuseTexture;
 uniform Texture specularTexture;
+uniform Texture shadowTexture; // Shadow Mapping
+
+float ShadowCalculation(vec4 fragPosInLightSpace){
+    vec3 projCoords = fragPosInLightSpace.xyz / fragPosInLightSpace.w; //为了以后改透视投影,手动做透视除法
+
+    projCoords = projCoords * 0.5 + 0.5; //把ndc坐标变换到[0,1]
+
+    float closestDepth = texture(shadowTexture.texture, projCoords.xy).r;
+
+    float currentDepth = projCoords.z;
+
+    float bias = 0.005; //shadow bias,避免物体表面错误的被认为在阴影中
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
+}
 
 void main(){
     float ambientStrength = 0.1;
@@ -53,5 +70,11 @@ void main(){
         specularColor = texture(specularTexture.texture, TexCoord).rgb;
     }else specularColor = vec3(1.0, 1.0, 1.0);
 
-    FragColor = vec4((La * ambientColor + Ld * diffuseColor + Ls * specularColor), 1.0);
+    float shadow = 0.0;
+
+    if(shadowTexture.activate == true){
+        shadow = ShadowCalculation(FragPosInLightSpace);
+    }
+
+    FragColor = vec4((La * ambientColor + (1.0 - shadow) * (Ld * diffuseColor + Ls * specularColor)), 1.0);
 }

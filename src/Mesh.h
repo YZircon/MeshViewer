@@ -51,8 +51,45 @@ public:
         return Scale;
     }
 
+    Eigen :: Vector3f GetCenterPos(){
+        return CenterPos;
+    }
+
+    Eigen :: Vector3f GetDirectionVec(){
+        return DirectVector;
+    }
+
+    void SetShader(Shader* shader){
+        program = shader;
+        for(auto it : materials){
+            it.second->SetShader(shader);
+        }
+    }
+
     void SetScale(Eigen :: Vector3f scale){
         Scale = scale;
+    }
+
+    void SetCenterPos(Eigen :: Vector3f center){
+        CenterPos = center;
+    }
+
+    void UpdateBoundingBox(){
+        BoundingBox["x_min"] = BoundingBox["x_min"] * Scale.x();
+        BoundingBox["x_max"] = BoundingBox["x_max"] * Scale.x();
+        BoundingBox["y_min"] = BoundingBox["y_min"] * Scale.y();
+        BoundingBox["y_max"] = BoundingBox["y_max"] * Scale.y();
+        BoundingBox["z_min"] = BoundingBox["z_min"] * Scale.z();
+        BoundingBox["z_max"] = BoundingBox["z_max"] * Scale.z();
+
+        DirectVector = CenterPos - Eigen :: Vector3f((BoundingBox["x_min"] + BoundingBox["x_max"]) / 2.0, (BoundingBox["y_min"] + BoundingBox["y_max"]) / 2.0,(BoundingBox["z_min"] + BoundingBox["z_max"]) / 2.0);
+
+        BoundingBox["x_min"] = BoundingBox["x_min"] + DirectVector.x();
+        BoundingBox["x_max"] = BoundingBox["x_max"] + DirectVector.x();
+        BoundingBox["y_min"] = BoundingBox["y_min"] + DirectVector.y();
+        BoundingBox["y_max"] = BoundingBox["y_max"] + DirectVector.y();
+        BoundingBox["z_min"] = BoundingBox["z_min"] + DirectVector.z();
+        BoundingBox["z_max"] = BoundingBox["z_max"] + DirectVector.z();
     }
 
     void AddMesh(Mesh *x){ // dangerous! force to add a mesh into the model, not inflect the Bounding Box
@@ -67,6 +104,8 @@ protected:
     std :: unordered_map <std :: string, Material *> materials;
     std :: unordered_map <std :: string, float> BoundingBox; // 标签为 x_min, x_max, y_min, y_max, z_min, z_max
     Eigen :: Vector3f Scale = Eigen :: Vector3f(1.0, 1.0, 1.0);
+    Eigen :: Vector3f CenterPos = Eigen :: Vector3f(0.0, 0.0, 0.0);
+    Eigen :: Vector3f DirectVector = Eigen :: Vector3f(0.0, 0.0, 0.0);
 };
 
 

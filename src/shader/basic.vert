@@ -12,5 +12,5 @@ out vec3 Color; //处理后的颜色, 处理后的位置直接写道gl_Position�
 void main() {
     gl_Position = Projection * View * Model * vec4(aPosition, 1.0);
     //Color = aColor;
-    Color = vec3(0.0f,255.0f,0.0f);
+    Color = vec3(1.0f,1.0f,1.0f);
 }
