@@ -5,6 +5,8 @@
 #include <GLFW/glfw3.h>
 #include "camera.h"
 
+constexpr double MY_PI = 3.141592653589;
+
 Camera :: Camera(
         Eigen :: Vector3f position,
         Eigen :: Vector3f direction,
@@ -45,8 +47,17 @@ void Camera :: handleKeyboardInput(int key, float deltatime) {
     }
 }
 
-void Camera :: handleMouseInput() {
+void Camera :: handleMouseInput(float xoffset, float yoffset) {
+    Yaw += xoffset;
+    Pitch += yoffset;
 
+    if(Pitch > 89.0f) Pitch = 89.0f;
+    if(Pitch < -89.0f) Pitch = -89.0f;
+
+    double yaw = Yaw * MY_PI / 180.f;
+    double pitch = Pitch * MY_PI / 180.f;
+
+    Direction = Eigen :: Vector3f(cos(yaw) * cos(pitch), sin(pitch), sin(yaw) * cos(pitch)).normalized();
 }
 
 void Camera :: handleScrollInput() {

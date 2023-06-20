@@ -52,7 +52,7 @@ public:
 
     void handleScrollInput(); /*TODO: Handle Scorll Input*/
 
-    void handleMouseInput(); /*TODO: Handle Mouse Input*/
+    void handleMouseInput(float xoffset, float yoffset); /*TODO: Handle Mouse Input*/
 
 protected:
     Eigen :: Vector3f Position = Eigen :: Vector3f(0.0f, 0.0f, 0.0f); // Camera's Position
@@ -62,6 +62,7 @@ protected:
     float MoveSpeed = 2.5f;
     float EyeFov;
     float AspectRatio;
+    float Yaw = -90.9f, Pitch = 0.0f; // 偏航角和俯仰角
 };
 
 class PerspectiveCamera : public Camera{

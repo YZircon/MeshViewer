@@ -31,7 +31,32 @@ void framebuffer_size_callback(GLFWwindow* window,int width,int height){//用来
 }
 
 PerspectiveCamera MainCam(Eigen :: Vector3f(0.0f, 0.0f, 0.0f), Eigen :: Vector3f(0.0f, 0.0f, -1.0f), Eigen :: Vector3f(0.0f, 1.0f, 0.0f), 0.5, 45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
+bool firstMouse = true;
+
 DirectedLight MainLight(Eigen :: Vector3f(10.0f, 10.0f, 10.0f), Eigen :: Vector3f(1.0f, 1.0f, 1.0f), 0.5, Eigen :: Vector3f(0.0, 0.0, -1.0));
+
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
+
+    if(firstMouse){
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float sensitivity = 0.10f;
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    MainCam.handleMouseInput(xoffset * sensitivity, yoffset * sensitivity);
+}
 
 void processInput(GLFWwindow* window, float deltaTime){
     if(glfwGetKey(window,GLFW_KEY_ESCAPE) == GLFW_PRESS){//如果在window窗口检测到esc被按下
@@ -147,6 +172,8 @@ int main(){
 
     glfwMakeContextCurrent(window);//创建窗口
     glfwSetFramebufferSizeCallback(window,framebuffer_size_callback);//如果窗口大小发生改变,调用framebuffer_size_callback函数重新设置视口大小为新值
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //捕获并隐藏鼠标
+    glfwSetCursorPosCallback(window, mouse_callback);
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std :: cout << "Failed to initialize GLAD" << std :: endl;
         return -1;
@@ -207,8 +234,8 @@ int main(){
     printf("Load Finish!\n");
 
     //初始化Shadow Mapping 用的深度图
-    const unsigned int SHADOW_WIDTH = 1024;
-    const unsigned int SHADOW_HEIGHT = 1024;
+    const unsigned int SHADOW_WIDTH = 4096;
+    const unsigned int SHADOW_HEIGHT = 4096;
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
 
