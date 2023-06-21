@@ -39,7 +39,16 @@ float ShadowCalculation(vec4 fragPosInLightSpace){
     float currentDepth = projCoords.z;
 
     float bias = 0.005; //shadow bias,避免物体表面错误的被认为在阴影中
-    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    float shadow = 0.0;
+
+    vec2 texelSize = 1.0 / textureSize(shadowTexture.texture, 0); //百分比渐进过滤, 从纹理四周采样, 平均结果
+    for(int x = -1; x <= 1; ++x){
+        for(int y = -1; y <= 1; ++y){
+            float pcfDepth = texture(shadowTexture.texture, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+    shadow / 9.0;
 
     return shadow;
 }

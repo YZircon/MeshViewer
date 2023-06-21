@@ -19,6 +19,7 @@ include_directories(${GLFW_INCLUDE_DIRS})
 include_directories(${Eigen_INCLUDE_DIRS})
 include_directories(3rdparty/OBJLoader)
 include_directories(3rdparty/stb)
+include_directories(3rdparty/imgui)
 
 add_executable(${PROJECT_NAME} ${GLAD_SOURCE}
         src/main.cpp
@@ -29,7 +30,15 @@ add_executable(${PROJECT_NAME} ${GLAD_SOURCE}
         src/Shader.cpp
         src/Shader.h
         src/Mesh.cpp
-        src/Mesh.h src/Light.cpp src/Material.cpp)
+        src/Mesh.h
+        src/Light.cpp
+        src/Material.cpp
+        3rdparty/imgui/imgui_impl_glfw.cpp
+        3rdparty/imgui/imgui_impl_opengl3.cpp
+        src/imgui_tables.cpp
+        src/imgui_widgets.cpp
+        src/imgui_draw.cpp
+        src/imgui.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES})
