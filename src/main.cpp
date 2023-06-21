@@ -370,7 +370,7 @@ int main(){
         ImGui :: Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui :: End();
 
-        //TODO: Shadow Mapping
+        //Shadow Mapping
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 
@@ -414,7 +414,6 @@ int main(){
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderQuad();
         DebugShader.deactivate();*/
-
 
         ImGui :: Render(); // 渲染ImGui, 不能放在绘制场景之前, 而应该和场景一起绘制, 否则绘制场景时glClear会把窗口清掉
         ImGui_ImplOpenGL3_RenderDrawData(ImGui :: GetDrawData());

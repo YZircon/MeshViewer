@@ -6,12 +6,11 @@ A C++/OpenGL Graphics Toy, it might be useful when you learning Computer Graphic
 
 **Model**
 
+.obj/.mtl
+
 **Rendering**
 
-- [ ] Blinn-Phong
-- [ ] Whitted-style Ray Tracing
-- [ ] Photon Mapping
-- [ ] Path Tracing
+- [x] Blinn-Phong
 
 ## Build & Run
 
@@ -21,7 +20,7 @@ This project is configured for Windows 10 64 bit & CLion 2022.3.1. If you are us
 - `cmake -G Ninja ..`
 - `ninja`
 
-Then, you'll find a executable file named `GLYT.exe` and a Dynamic Linking Library named `glfw3.dll` in the `build` folder.  This is  what you have build.
+Then, you'll find a executable file named `MeshViewer.exe` and a Dynamic Linking Library named `glfw3.dll` in the `build` folder.  This is  what you have build.
 
 Currently, the shader & resource path is hard-coded in `main.cpp` , to make the program run correctly, the architecture of your directory should be like the below:
 
@@ -45,3 +44,5 @@ Currently, the shader & resource path is hard-coded in `main.cpp` , to make the 
 #### OBJ-Loader
 
 #### stb
+
+**Dear ImGui**
