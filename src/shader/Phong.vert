@@ -17,6 +17,7 @@ out vec4 FragPosInLightSpace; //光空间的坐标
 
 void main() {
     gl_Position = Projection * View * Model * vec4(aPosition, 1.0);
+    //gl_Position.xyzw /= gl_Position.w; //GPU会自动完成透视除法,因此没有这行也是对的(而且事实上不应该自己对gl_Position做透视除法,Vert shader输出的是Clip Space中的坐标),但是你要是想自己做透视除法就记得xyzw都要除
     //Color = aColor;
     Color = vec3(1.0f, 1.0f, 1.0f);
     FragPos = vec3(Model * vec4(aPosition, 1.0));

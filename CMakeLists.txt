@@ -3,21 +3,17 @@ project(MeshViewer)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(GLAD_DIR 3rdparty/glad/cmake)
-set(GLFW_DIR 3rdparty/GLFW/cmake)
-set(Eigen_DIR 3rdparty/Eigen/cmake)
+set(GLFW_DIR 3rdparty/glfw-3.3.8/cmake)
 
 
-find_package(GLAD REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(Eigen REQUIRED)
 
 
-include_directories(${GLAD_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
-include_directories(${Eigen_INCLUDE_DIRS})
-include_directories(3rdparty/OBJLoader)
+include_directories(3rdparty/glad/include)
+include_directories(3rdparty/eigen-3.4.0)
+include_directories(3rdparty/OBJ-Loader)
 include_directories(3rdparty/stb)
 include_directories(3rdparty/imgui)
 
@@ -33,12 +29,13 @@ add_executable(${PROJECT_NAME} ${GLAD_SOURCE}
         src/Mesh.h
         src/Light.cpp
         src/Material.cpp
-        3rdparty/imgui/imgui_impl_glfw.cpp
-        3rdparty/imgui/imgui_impl_opengl3.cpp
-        src/imgui_tables.cpp
-        src/imgui_widgets.cpp
-        src/imgui_draw.cpp
-        src/imgui.cpp)
+        3rdparty/glad/src/glad.c
+        3rdparty/imgui/backends/imgui_impl_glfw.cpp
+        3rdparty/imgui/backends/imgui_impl_opengl3.cpp
+        3rdparty/imgui/imgui_tables.cpp
+        3rdparty/imgui/imgui_widgets.cpp
+        3rdparty/imgui/imgui_draw.cpp
+        3rdparty/imgui/imgui.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES})
