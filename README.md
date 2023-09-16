@@ -38,7 +38,7 @@ Currently, the shader & resource path is hard-coded in `main.cpp` , to make the 
 - Glad, Multi-Language GL/GLES/EGL/GLX/WGL Loader-Generator based on the official specs, https://glad.dav1d.de/
 - GLFW, an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop, https://www.glfw.org/
 - Eigen, a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms, https://gitlab.com/libeigen/eigen
-- OBJ-Loader, A C++ OBJ Model Loader that will parse .obj & .mtl Files into Indices, Vertices, Materials, and Mesh Structures, https://github.com/Bly7/OBJ-Loader
+- OBJ-Loader, A C++ OBJ Model Loader that will parse .obj & .mtl Files into Indices, Vertices, Materials, and Mesh Structures, https://github.com/Bly7/OBJ-Loader, I modified some of them to support more descriptions in the obj file, the new code follows the license of this project.
 - stb, single-file public domain(or MIT License) libraries for C/C++, https://github.com/nothings/stb
 - Dear Imgui, Bloat-free Graphical User interface for C++ with minimal dependencies, https://github.com/ocornut/imgui
 
