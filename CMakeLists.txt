@@ -12,7 +12,7 @@ find_package(OpenGL REQUIRED)
 
 include_directories(${GLFW_INCLUDE_DIRS})
 include_directories(3rdparty/glad/include)
-include_directories(3rdparty/eigen-3.4.0)
+include_directories(3rdparty/eigen)
 include_directories(3rdparty/OBJ-Loader)
 include_directories(3rdparty/stb)
 include_directories(3rdparty/imgui)
